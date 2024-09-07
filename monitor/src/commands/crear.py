@@ -30,11 +30,11 @@ class Crear(BaseCommannd):
             raise ResourcesAlreadyExist
 
     @staticmethod
-    def check_health_by_seconds(maxSeconds):
+    def check_health_by_seconds(maxSeconds, waitingIntervalSeconds):
         from ..blueprints.requests import check_client_health
         from ..models.model import save_health_status
         
         for _ in range(maxSeconds):
             health_status = check_client_health()
             save_health_status(health_status)
-            time.sleep(1)
+            time.sleep(waitingIntervalSeconds)

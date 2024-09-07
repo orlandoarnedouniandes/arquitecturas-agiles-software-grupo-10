@@ -1,10 +1,13 @@
-import os 
+import os
+import time 
 from flask import Flask, jsonify
 from .blueprints.requests import requests_blueprint
 from .errors.errors import ApiError
 from flask_sqlalchemy import SQLAlchemy
 from .models import db
 import logging
+from .commands.crear import Crear 
+import threading 
 
 app = Flask(__name__)
 app.register_blueprint(requests_blueprint)
@@ -31,3 +34,18 @@ def handle_exception(err):
       "version": os.environ.get("VERSION")
     }
     return jsonify(response), err.code
+
+def delayed_health_check():
+    app.logger.info("Waiting for 10 seconds before starting health check...")
+    time.sleep(30) 
+
+    with app.app_context():
+        app.logger.info("Starting 30-second health check...")
+        Crear.check_health_for_30_seconds()
+
+
+def start_health_check_thread():
+    health_check_thread = threading.Thread(target=delayed_health_check)
+    health_check_thread.start()
+
+start_health_check_thread()

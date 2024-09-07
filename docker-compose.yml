@@ -19,8 +19,10 @@ services:
     environment:
       - VERSION=1.0
       - MONITOR_PATH=http://monitorhost:3001
-      - CELERY_BROKER_URL=redis://redishost:6379/0
-      - CELERY_RESULT_BACKEND=redis://redishost:6379/0
+      - REDIS_HOST=redishost
+      - REDIS_PORT=6379
+      - REDIS_BD=0
+      - REDIS_CHANNEL=metrics
       - RES_OK=50
     networks:
       - public_net
@@ -33,8 +35,10 @@ services:
     environment:
       - VERSION=1.0
       - CLIENTE_PATH=http://clientehost:3000
-      - CELERY_BROKER_URL=redis://redishost:6379/0
-      - CELERY_RESULT_BACKEND=redis://redishost:6379/0
+      - REDIS_HOST=redishost
+      - REDIS_PORT=6379
+      - REDIS_BD=0
+      - REDIS_CHANNEL=metrics
     networks:
       - public_net
 

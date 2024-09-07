@@ -7,7 +7,8 @@ from flask_sqlalchemy import SQLAlchemy
 from .models import db
 import logging
 from .commands.crear import Crear 
-import threading 
+import threading
+from .commands.lector import Lector
 
 app = Flask(__name__)
 app.register_blueprint(requests_blueprint)
@@ -17,7 +18,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.logger.setLevel(logging.INFO)
-handler = logging.FileHandler('app.log')
+handler = logging.FileHandler('./app.log')
 app.logger.addHandler(handler)
 app.logger.info('Inicializando aplicacion')
 
@@ -26,6 +27,12 @@ app_context.push()
 
 db.init_app(app)
 db.create_all()
+
+REDIS_HOST=os.environ.get("REDIS_HOST")
+REDIS_PORT=os.environ.get("REDIS_PORT")
+REDIS_BD=os.environ.get("REDIS_BD")
+REDIS_CHANNEL=os.environ.get("REDIS_CHANNEL")
+Lector(REDIS_HOST,REDIS_PORT,REDIS_BD,REDIS_CHANNEL).execute()
 
 @app.errorhandler(ApiError)
 def handle_exception(err):

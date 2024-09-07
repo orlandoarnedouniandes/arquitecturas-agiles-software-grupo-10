@@ -17,6 +17,15 @@ class Monitor(db.Model):
     updateAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     __tablename__ = 'monitor'
 
+class Metricas(db.Model):
+    id = db.Column(db.String(128), primary_key=True)
+    inicio = db.Column(db.DateTime, nullable=False)  # Client request or endpoint
+    fin = db.Column(db.DateTime, nullable=False)  # Health status (healthy, unhealthy, unreachable)
+    latencia = db.Column(db.Float, nullable=False)  # HTTP status code
+    createdAt = db.Column(db.DateTime, default=datetime.utcnow)
+    updateAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    __tablename__ = 'metricas'
+
 class MonitorSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Monitor
@@ -29,6 +38,11 @@ class MonitorSchema(SQLAlchemyAutoSchema):
     error_message = fields.String()
     createdAt = fields.DateTime()
     updateAt = fields.DateTime()
+
+class MetricasSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Metricas
+        load_instance = True
 
 def save_health_status(health_status):
     new_uuid = str(uuid4())

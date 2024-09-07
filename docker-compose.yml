@@ -1,0 +1,79 @@
+services:
+  clientes:
+    build: clientes/
+    hostname: clientehost
+    ports:
+      - "3000:3000"
+    environment:
+      - VERSION=1.0
+      - MONITOR_PATH=http://monitorhost:3001
+      - CELERY_BROKER_URL=redis://redishost:6379/0
+      - CELERY_RESULT_BACKEND=redis://redishost:6379/0
+      - RES_OK=50
+    networks:
+      - public_net
+    
+  monitor:
+    build: monitor/
+    hostname: monitorhost
+    ports:
+      - "3001:3001"
+    environment:
+      - VERSION=1.0
+      - CLIENTE_PATH=http://clientehost:3000
+      - CELERY_BROKER_URL=redis://redishost:6379/0
+      - CELERY_RESULT_BACKEND=redis://redishost:6379/0
+    networks:
+      - public_net
+
+  kong-dbless:
+    image: kong/kong-gateway:3.7.1.2
+    hostname: kong
+    environment:
+      KONG_DATABASE: off
+      KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_ADMIN_GUI_URL: http://localhost:8002
+      KONG_LICENSE_DATA: 
+    volumes:
+      - kong_declarative:/kong/declarative
+    networks:
+      - kong_net
+      - public_net
+    configs:
+      - source: kong
+        target: /kong/declarative/kong.yml
+        mode: 444
+    ports:
+      - "80:8000"
+      - "8443:8443"
+      - "8001:8001"
+      - "8444:8444"
+      - "8002:8002"
+      - "8003:8003"
+      - "8004:8004"
+      - "8445:8445"
+      - "8446:8446"
+      - "8447:8447"
+
+  redis-server:
+    networks:
+      - public_net
+    hostname: redishost
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+networks:
+  kong_net:
+  public_net:
+
+volumes:
+  kong_declarative:
+
+configs:
+  kong:
+    file: ./gateway/kong.yml

@@ -1,9 +1,10 @@
-from locust import HttpUser, TaskSet, task, between
+import os 
 import uuid
+from locust import HttpUser, TaskSet, task, between
 
 class WebsiteUser(HttpUser):
-    wait_time = between(5, 15)
-    host = "http://localhost" 
+    wait_time = between(5, 15)   
+    host =  os.getenv("LOCUST_TARGET_URL", 'http://kong:8000')
 
     #@task
     #def ping(self):

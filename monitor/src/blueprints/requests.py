@@ -22,7 +22,7 @@ def ping():
 
 def check_client_health():
     try:
-        response = requests.get('http://127.0.0.1:3000/ping')
+        response = requests.get('http://clientehost:3000/ping')
         if response.status_code == 200:
             return {"status": "healthy", "code": response.status_code}
         else:

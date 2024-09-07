@@ -39,8 +39,8 @@ def save_health_status(health_status):
         status=health_status.get("status"),
         response_code=health_status.get("code", None),
         error_message=health_status.get("error", None),
-        createdAt=datetime.utcnow(),
-        updateAt=datetime.utcnow()
+        createdAt=datetime.now(),
+        updateAt=datetime.now()
     )
 
     db.session.add(monitor_entry)

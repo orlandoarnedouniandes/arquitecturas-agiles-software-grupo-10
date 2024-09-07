@@ -41,7 +41,7 @@ def delayed_health_check():
 
     with app.app_context():
         app.logger.info("Starting 30-second health check...")
-        Crear.check_health_by_seconds(30)
+        Crear.check_health_by_seconds(180,10)
 
 
 def start_health_check_thread():

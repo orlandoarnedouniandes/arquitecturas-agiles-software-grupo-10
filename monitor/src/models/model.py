@@ -2,7 +2,6 @@ from flask_sqlalchemy import SQLAlchemy
 from marshmallow import fields, Schema
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from datetime import datetime
-from .model import Monitor
 from uuid import uuid4
 
 
@@ -34,7 +33,7 @@ class MonitorSchema(SQLAlchemyAutoSchema):
 def save_health_status(health_status):
     monitor_entry = Monitor(
         id=str(uuid4()),  # Generate a unique ID
-        request='client-service-ping',  # Example request, can be dynamic based on the check
+        request='client-service-ping', 
         status=health_status.get("status"),
         response_code=health_status.get("code", None),
         error_message=health_status.get("error", None)

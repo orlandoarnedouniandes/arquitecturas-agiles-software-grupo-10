@@ -1,4 +1,16 @@
 services:
+  locust:
+    build: locust/
+    hostname: locusthost
+    ports:
+      - "8089:8089"
+    environment:
+      - LOCUST_FILE=locustfile.py
+      - LOCUST_MODE=standalone
+      - LOCUST_TARGET_URL=http://kong:8000
+    networks:
+      - public_net
+
   clientes:
     build: clientes/
     hostname: clientehost
@@ -70,6 +82,7 @@ services:
 networks:
   kong_net:
   public_net:
+  locust_net:
 
 volumes:
   kong_declarative:

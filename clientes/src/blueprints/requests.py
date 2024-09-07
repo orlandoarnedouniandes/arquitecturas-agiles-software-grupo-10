@@ -13,6 +13,7 @@ def crear():
 
 @requests_blueprint.route('/<string:id>', methods = ['GET'])
 def home(id):
+    print(f"GET /{id}")
     json = request.get_json()
     result = Consulta(id).execute()
     return jsonify({"id": id, "createdAt": result.get("createdAt")}), 200

@@ -22,6 +22,7 @@ class Metricas(db.Model):
     inicio = db.Column(db.DateTime, nullable=False)  # Client request or endpoint
     fin = db.Column(db.DateTime, nullable=False)  # Health status (healthy, unhealthy, unreachable)
     latencia = db.Column(db.Float, nullable=False)  # HTTP status code
+    codigo = db.Column(db.String(32), nullable=False)  # Error message if any
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updateAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     __tablename__ = 'metricas'

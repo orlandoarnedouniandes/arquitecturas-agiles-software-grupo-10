@@ -41,6 +41,6 @@ class DatosABD(BaseCommannd):
     codigo = info.get("codigo")
     latencia = (fin-inicio).total_seconds()
     current_app.logger.info(f"inicio: {inicio}, final: {fin}, codigo: {codigo}, latencia: {latencia}")
-    nueva_metrica = Metricas(id=str(uuid.uuid4()), inicio=inicio, fin=fin,latencia=latencia)
+    nueva_metrica = Metricas(id=str(uuid.uuid4()), inicio=inicio, fin=fin,latencia=latencia, codigo=codigo)
     db.session.add(nueva_metrica)
     db.session.commit()

@@ -1,0 +1,13 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+- host: clientehost
+  name: clientes_service
+  port: 3000
+  protocol: http
+  routes:
+  - name: clientes_route
+    paths:
+    - /clientes
+    strip_path: true

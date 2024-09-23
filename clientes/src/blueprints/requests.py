@@ -16,7 +16,7 @@ def home(id):
     print(f"GET /{id}")
     json = request.get_json()
     result = Consulta(id).execute()
-    return jsonify({"id": id, "createdAt": result.get("createdAt")}), 200
+    return result, 200
 
 
 @requests_blueprint.route('/ping', methods = ['GET'])

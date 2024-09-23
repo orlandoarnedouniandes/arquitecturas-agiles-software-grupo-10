@@ -38,6 +38,8 @@ services:
       - REDIS_HOST=redishost
       - REDIS_PORT=6379
       - REDIS_BD=0
+      - CODIGOS_INDISPONIBILIDAD=408,500
+      - TIEMPO_INDISPONIBILIDAD=1500
       - REDIS_CHANNEL=metrics
     networks:
       - public_net

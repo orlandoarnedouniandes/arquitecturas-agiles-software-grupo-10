@@ -11,10 +11,13 @@ import os
 from random import randint
 from time import sleep
 from ..redis_client.redis_client import redis_client
+from faker import Faker
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+fake = Faker(['es_CO'])
 
 cliente_schema = ClienteSchema()
 
@@ -22,8 +25,9 @@ cliente_schema = ClienteSchema()
 class Consulta(BaseCommannd):
     def __init__(self, id):
         self.time = obtener_fecha_actual()
-        nuevo_cliente = Cliente(id=id, username="primo".strip(), email="primo@gmail.com".strip(), dni="1045325478",
-                                fullName="Primo", phoneNumber="3785842541", createdAt=self.time, updateAt=self.time)
+        name = fake.name()
+        nuevo_cliente = Cliente(id=id, username=name.split(" ")[0].lower(), email=fake.email(), dni=randint(1000000, 2000000000),
+                                fullName=name, phoneNumber=randint(3000000000, 3999999999), createdAt=self.time, updateAt=self.time)
         self.nuevo_cliente = cliente_schema.dump(nuevo_cliente)
 
     def execute(self):

@@ -3,6 +3,7 @@ import os
 import redis
 import json
 from flask import current_app
+from .valida_autentificacion import ValidaAutentificacion
 
 REDIS_CHANNEL=os.environ.get("REDIS_CHANNEL")
 
@@ -15,12 +16,41 @@ def redis_client():
 class PublicarMensajes(BaseCommannd):
     def __init__(self, header, informacion):
         self.header = header
-        self.informacion = informacion
+        self.status_code = informacion.get('status_code')
+        self.path_local = informacion.get('path_local')
+        self.contenido = informacion.get('contenido')
 
     def execute(self):
+        usuario_id = ""
+        ip_remota = ""
+        host_remoto = ""
+        path_remoto = ""
         try:
-            current_app.logger.info("Publishing message to topic:  %s, %s", self.informacion, "vacio")
-            redis_client().publish(REDIS_CHANNEL, json.dumps(self.informacion))
+            datos_usuario = ValidaAutentificacion(self.header).execute()
+            usuario_id = datos_usuario.get("id")
+        except Exception as e:
+            current_app.logger.error("Error consiguiendo datos de usuario: %s", e)
+        
+        try:
+            if self.header.get('X-Forwarded-For') is not None:
+                ip_remota = self.header.get('X-Forwarded-For')
+                host_remoto = self.header.get('X-Forwarded-Host')
+                path_remoto = self.header.get('X-Forwarded-Path')
+        except Exception as e:
+            current_app.logger.error("Error Extrayendo informacion del gateway: %s", e)
+
+        try:
+            infoPublicar = {
+                "status_code": self.status_code,
+                "path-local": self.path_local,
+                "contenido": str(self.contenido),
+                "usuario_id": usuario_id,
+                "ip_remota": ip_remota,
+                "host_remoto": host_remoto,
+                "path_remoto": path_remoto,
+            }
+            current_app.logger.info("Publishing message to topic:  %s", infoPublicar)
+            redis_client().publish(REDIS_CHANNEL, json.dumps(infoPublicar))
             current_app.logger.info("Message published successfully!")
         except Exception as e:
             current_app.logger.error("Exception: %s", e)

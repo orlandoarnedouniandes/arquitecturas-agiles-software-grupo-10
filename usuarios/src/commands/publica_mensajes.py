@@ -26,13 +26,14 @@ class PublicarMensajes(BaseCommannd):
         host_remoto = ""
         path_remoto = ""
         try:
-            datos_usuario = ValidaAutentificacion(self.header).execute()
-            usuario_id = datos_usuario.get("id")
+            if 'Authorization' in self.header:
+                datos_usuario = ValidaAutentificacion(self.header).execute()
+                usuario_id = datos_usuario.get("id")
         except Exception as e:
             current_app.logger.error("Error consiguiendo datos de usuario: %s", e)
         
         try:
-            if self.header.get('X-Forwarded-For') is not None:
+            if 'X-Forwarded-For' in self.header:
                 ip_remota = self.header.get('X-Forwarded-For')
                 host_remoto = self.header.get('X-Forwarded-Host')
                 path_remoto = self.header.get('X-Forwarded-Path')

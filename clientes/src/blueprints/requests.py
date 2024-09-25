@@ -1,9 +1,38 @@
-from flask import jsonify, request, Blueprint
+from venv import logger
+from flask import jsonify, request, Blueprint, make_response
 from ..commands.crear import Crear
-from ..commands.consulta import Consulta
-
+from ..commands.consultaUsuario import ConsultaUsuario
+from ..commands.consultaSolicitudes import ConsultaSolicitudes
+from functools import wraps
+import os
+import requests
 
 requests_blueprint = Blueprint('requests', __name__)
+
+# Decorador para validar el token y los permisos
+def token_required(required_permission=None):
+    def decorator(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            token = request.headers.get('Authorization')
+            if not token:
+                return make_response(jsonify({'message': 'Token is missing!'}), 401)
+            
+            authorization_service_host = os.getenv("USERS_PATH")
+            logger.info(f"Authorization service host: {authorization_service_host}")
+            authorization_url = f"{authorization_service_host}/usuario/autoriza/"
+
+            response = requests.get(authorization_url, headers={'Authorization': token})
+            
+            logger.info(f"Authorization service response: {response.status_code}, {response.text}")
+            if response.status_code == 401:
+                return make_response(jsonify({'message': 'Token is invalid!'}), 401)
+            elif response.status_code != 200:
+                return make_response(jsonify({'message': 'Authorization service error!'}), 500)
+            
+            return f(*args, **kwargs)
+        return decorated
+    return decorator
 
 @requests_blueprint.route('/', methods = ['POST'])
 def crear():
@@ -14,8 +43,14 @@ def crear():
 @requests_blueprint.route('/<string:id>', methods = ['GET'])
 def home(id):
     print(f"GET /{id}")
-    json = request.get_json()
-    result = Consulta(id).execute()
+    result = ConsultaUsuario(id).execute()
+    return result, 200
+
+@requests_blueprint.route('/solicitudes/<string:id>', methods = ['GET'])
+@token_required(required_permission='solicitudes')
+def solicitudes(id):
+    print(f"GET /{id}")
+    result = ConsultaSolicitudes(id).execute()
     return result, 200
 
 

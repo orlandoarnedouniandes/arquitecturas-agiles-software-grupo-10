@@ -2,8 +2,6 @@ from .base_command import BaseCommannd
 from ..errors.errors import  ExpiredInformation, Bloqued
 from ..models import  Usuario, UsuarioSchema
 from datetime import datetime
-from .publica_mensajes import PublicarMensajes
-import threading
 
 
     

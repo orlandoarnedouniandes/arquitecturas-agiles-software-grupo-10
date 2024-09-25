@@ -5,9 +5,10 @@ from ..commands.valida_autentificacion import ValidaAutentificacion
 from ..commands.reset import Reset
 from ..commands.actualiza import Actualiza
 from ..commands.publica_mensajes import PublicarMensajes
+from ..commands.path_permitidos import ValidarPathPermitidos
 from ..errors.errors import IncompleteRequest
 import threading
-import json
+import os
 
 requests_blueprint = Blueprint('requests', __name__)
 
@@ -28,6 +29,7 @@ def valida_autentificacion():
     #current_app.logger.info(f"header: {request.headers}")
     if 'Authorization' not in request.headers:
         raise IncompleteRequest
+    ValidarPathPermitidos(request.headers,request.path).execute()
     result = ValidaAutentificacion(request.headers).execute()
     return jsonify({"id": result.get("id"),"username": result.get("username"), "email": result.get("email"), "fullName": result.get("fullName"), "dni": result.get("dni"), "phoneNumber": result.get("phoneNumber"), "status": result.get("status")}), 200
 
@@ -47,6 +49,6 @@ def update(id):
 
 @requests_blueprint.after_request
 def after_request(response):
-    procesador = threading.Thread(target=PublicarMensajes(request.headers,{"status_code": response.status_code,"contenido":"", "path actual": request.path}).execute(), args=('',))
+    procesador = threading.Thread(target=PublicarMensajes(request.headers,{"status_code": response.status_code,"contenido":response.get_data(), "path_local": request.path}).execute(), args=('',))
     procesador.start()
     return response

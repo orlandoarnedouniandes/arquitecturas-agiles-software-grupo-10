@@ -33,3 +33,7 @@ class ToVerify(ApiError):
 class Bloqued(ApiError):
     code = 423
     description = "El usuario ha sido bloqueado por seguridad."
+
+class IntervencionUsuario(ApiError):
+    code = 444
+    description = "El usuario tiene problemas para gestionar el sistema, trabajara limitado."

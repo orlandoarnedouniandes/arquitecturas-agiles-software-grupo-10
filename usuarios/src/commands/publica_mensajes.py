@@ -19,6 +19,8 @@ class PublicarMensajes(BaseCommannd):
         self.status_code = informacion.get('status_code')
         self.path_local = informacion.get('path_local')
         self.contenido = informacion.get('contenido')
+        self.solicitud = informacion.get('solicitud')
+        self.method = informacion.get('method')
 
     def execute(self):
         usuario_id = ""
@@ -29,6 +31,8 @@ class PublicarMensajes(BaseCommannd):
             if 'Authorization' in self.header:
                 datos_usuario = ValidaAutentificacion(self.header).execute()
                 usuario_id = datos_usuario.get("id")
+            if usuario_id == "" and (self.path_local in {"/users/autentica","/users"}) and self.method == "POST":
+                usuario_id = json.loads(self.contenido).get("id")
         except Exception as e:
             current_app.logger.error("Error consiguiendo datos de usuario: %s", e)
         
@@ -49,6 +53,8 @@ class PublicarMensajes(BaseCommannd):
                 "ip_remota": ip_remota,
                 "host_remoto": host_remoto,
                 "path_remoto": path_remoto,
+                "method": self.method,
+                "solicitud": str(self.solicitud)
             }
             current_app.logger.info("Publishing message to topic:  %s", infoPublicar)
             redis_client().publish(REDIS_CHANNEL, json.dumps(infoPublicar))

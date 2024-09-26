@@ -17,9 +17,17 @@ class ValidarPathPermitidos(BaseCommannd):
       permitidos = 2
     else:
       permitidos = 1
-    if self.header.get('X-Forwarded-Path').strip() in PATHS_AUTORIZADOS:
-      bandera = bandera + 1
-    if self.path_local in PATHS_AUTORIZADOS:
-      bandera = bandera + 1
+    for path in PATHS_AUTORIZADOS:
+      evalua_exacto =  path.count('/') == 1
+      path_publico = self.header.get('X-Forwarded-Path').strip()
+      
+      if path_publico is not None and (path_publico == path if evalua_exacto else path_publico.startswith(path)):
+        bandera = bandera + 1
+      #current_app.logger.info("path_publico:%s-%s(%s)", path_publico, path, bandera)
+
+      if self.path_local == path if evalua_exacto else self.path_local.strip().startswith(path):
+        bandera = bandera + 1
+      #current_app.logger.info("path_privado:%s-%s(%s)", self.path_local, path, bandera)
+    
     if permitidos != bandera:
       raise IntervencionUsuario

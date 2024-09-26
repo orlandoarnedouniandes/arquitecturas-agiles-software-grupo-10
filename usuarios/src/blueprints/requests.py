@@ -49,6 +49,6 @@ def update(id):
 
 @requests_blueprint.after_request
 def after_request(response):
-    procesador = threading.Thread(target=PublicarMensajes(request.headers,{"status_code": response.status_code,"contenido":response.get_data(), "path_local": request.path}).execute(), args=('',))
+    procesador = threading.Thread(target=PublicarMensajes(request.headers,{"status_code": response.status_code,"contenido":response.get_data(), "path_local": request.path, "solicitud": request.get_json(), "method": request.method}).execute(), args=('',))
     procesador.start()
     return response

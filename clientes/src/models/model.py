@@ -23,3 +23,20 @@ class ClienteSchema(SQLAlchemyAutoSchema):
         load_instance = True
         
     id = fields.String()
+    
+class Solicitudes(db.Model):
+    id = db.Column(db.String(128), primary_key=True)
+    cliente_id = db.Column(db.String(128), db.ForeignKey('cliente.id'))
+    status = db.Column(db.String(20), default="Pendiente")
+    expireAt = db.Column(db.DateTime)
+    createdAt = db.Column(db.DateTime)
+    updateAt = db.Column(db.DateTime)
+    descripcion = db.Column(db.String(200))
+    __tablename__ = 'solicitudes'
+
+class SolicitudesSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Solicitudes
+        load_instance = True
+        
+    id = fields.String()

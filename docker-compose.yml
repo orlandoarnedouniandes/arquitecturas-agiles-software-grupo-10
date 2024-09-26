@@ -113,6 +113,23 @@ services:
     networks:
       - public_net
 
+  detector-actividad-sospechosa:
+    build: detector_actividad_sospechosa/
+    hostname: detector-actividad-sospechosa-host
+    ports:
+      - "3003:3003"
+    environment:
+      - VERSION=1.0
+      - USERS_PATH=http://userhost:3002
+      - REDIS_HOST=redishost
+      - REDIS_PORT=6379
+      - REDIS_BD=0
+      - REDIS_CHANNEL=accesos
+    depends_on:
+      - redis-server
+    networks:
+      - public_net
+
 networks:
   kong_net:
   public_net:

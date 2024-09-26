@@ -15,12 +15,20 @@ def token_required(required_permission=None):
         @wraps(f)
         def decorated(*args, **kwargs):
             token = request.headers.get('Authorization')
+
             if not token:
                 return make_response(jsonify({'message': 'Token is missing!'}), 401)
             
-            authorization_service_host = os.getenv("USERS_PATH")
+            if not token.startswith('Bearer '):
+                return make_response(jsonify({'message': 'Invalid token format!'}), 401)
+            
+            token = token[len('Bearer '):]
+            
+            authorization_service_host = 'http://host.docker.internal:3002'
             logger.info(f"Authorization service host: {authorization_service_host}")
-            authorization_url = f"{authorization_service_host}/usuario/autoriza/"
+            authorization_url = f"{authorization_service_host}/users/autoriza"
+
+            logger.info(f"authorization_url: {authorization_url}'")
 
             response = requests.get(authorization_url, headers={'Authorization': token})
             

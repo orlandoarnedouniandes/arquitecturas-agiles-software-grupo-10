@@ -52,6 +52,8 @@ def process_redis_messages():
 
                 with get_db() as session:
                     logger.info(f"Saving access logs for user {data['usuario_id']}")
+                    path_local=data.get('path-local', '')
+                    staus_code=data.get('status_code', '')
                     access_logs = InfoPublicar(
                         status_code=data.get('status_code', ''),
                         path_local=data.get('path-local', ''),
@@ -65,12 +67,12 @@ def process_redis_messages():
                     session.commit()
                     logger.info(f"Access logs saved for user {data['usuario_id']}")
 
-                    razon = determinar_razon(data['usuario_id'])
-                    if razon:
-                        logger.info(f"User {data['usuario_id']} is suspicious. Reason: {razon}")
+                    #razon = determinar_razon(data['usuario_id'])
+                    if path_local == "/users/autoriza" and staus_code != "200":
+                        logger.info(f"User {data['usuario_id']} is suspicious. Reason: {'Unforbidden'}")
                         usuario_sospechoso = UsuariosSospechosos(
                             usuario_id=data['usuario_id'],
-                            razon=razon,
+                            razon='Unforbidden',
                             fecha_detectado=datetime.utcnow()
                         )
                         session.add(usuario_sospechoso)

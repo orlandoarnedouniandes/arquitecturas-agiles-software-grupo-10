@@ -107,7 +107,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_BD=0
       - REDIS_CHANNEL=accesos
-      - PATHS_AUTORIZADOS=/users,/usuario/autentica,/users/autentica,/usuario/autoriza,/users/autoriza,/usuario/revocar/,/users/revocar/,/clientes/,/
+      - PATHS_AUTORIZADOS=/users,/usuario/autentica,/users/autentica,/usuario/autoriza,/users/autoriza,/usuario/revocar/,/users/revocar/,/clientes/personalinfo
     depends_on:
       - redis-server
     networks:

@@ -9,6 +9,7 @@ from ..commands.path_permitidos import ValidarPathPermitidos
 from ..errors.errors import IncompleteRequest
 import threading
 import os
+from flask import current_app
 
 requests_blueprint = Blueprint('requests', __name__)
 
@@ -26,7 +27,9 @@ def autentifica():
 
 @requests_blueprint.route('/users/autoriza', methods = ['GET'])
 def valida_autentificacion():
-    #current_app.logger.info(f"header: {request.headers}")
+    #current_app.logger.info(f"headers {request.headers}'")
+    #current_app.logger.info(f"token: Authorization {request.headers.get('Authorization')}'")
+    
     if 'Authorization' not in request.headers:
         raise IncompleteRequest
     ValidarPathPermitidos(request.headers,request.path).execute()

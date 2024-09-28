@@ -11,3 +11,11 @@ services:
     paths:
     - /clientes
     strip_path: true
+
+- name: usuario_service
+  url: http://userhost:3002/users
+  routes:
+  - name: usuario_route
+    paths:
+    - /usuario
+    strip_path: true

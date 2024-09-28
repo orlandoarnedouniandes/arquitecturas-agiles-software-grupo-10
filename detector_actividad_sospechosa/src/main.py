@@ -67,8 +67,9 @@ def process_redis_messages():
                     session.commit()
                     logger.info(f"Access logs saved for user {data['usuario_id']}")
 
-                    #razon = determinar_razon(data['usuario_id'])
-                    if path_local == "/users/autoriza" and staus_code != "200":
+                    
+                    if path_local == "/users/autoriza" and staus_code != 200:
+                        logger.info(f"User suspicious. Reason: {staus_code}")
                         logger.info(f"User {data['usuario_id']} is suspicious. Reason: {'Unforbidden'}")
                         usuario_sospechoso = UsuariosSospechosos(
                             usuario_id=data['usuario_id'],

@@ -17,12 +17,12 @@ def token_required():
             authorization_service_host = os.getenv('USERS_PATH')
             authorization_url = f"{authorization_service_host}/users/autoriza"
 
-            logger.info(f"headers {request.headers}'")
-            logger.info(f"token: Authorization {request.headers.get('Authorization')}'")
+            #logger.info(f"headers {request.headers}'")
+            #logger.info(f"token: Authorization {request.headers.get('Authorization')}'")
 
             response = requests.get(authorization_url, headers=request.headers)
             
-            logger.info(f"Authorization service response: {response.status_code}, {response.text}")
+            #logger.info(f"Authorization service response: {response.status_code}, {response.text}")
 
             if response.status_code != 200:
                 return make_response(response.text, response.status_code)
